@@ -1,0 +1,9 @@
+import { Link } from 'react-router-dom';
+import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
+
+export default function Cart({ cart, updateCart }) {
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const updateQuantity = (index, change) => updateCart(cart.map((item, i) => i === index ? { ...item, quantity: Math.max(1, item.quantity + change) } : item));
+  const remove = index => updateCart(cart.filter((_, i) => i !== index));
+  return <div className="cart-page"><div className="page-title"><span className="eyebrow">Your selection</span><h1>Shopping cart</h1></div>{cart.length === 0 ? <div className="empty-state"><ShoppingBag /><h2>Your cart is empty</h2><p>Explore the collection and find something made for you.</p><Link className="button primary" to="/products">Shop now</Link></div> : <div className="cart-layout"><div className="cart-items">{cart.map((item, index) => <article className="cart-item" key={`${item.product}-${index}`}><img src={item.image} alt={item.name} /><div className="cart-item-copy"><span>{item.custom ? 'Custom design' : 'Standard tee'}</span><h3>{item.name}</h3><p>{item.size} · {item.color}</p><div className="line-actions"><button onClick={() => updateQuantity(index, -1)}><Minus size={14} /></button><span>{item.quantity}</span><button onClick={() => updateQuantity(index, 1)}><Plus size={14} /></button><button onClick={() => remove(index)}><Trash2 size={16} /></button></div></div><strong>£{item.price * item.quantity}</strong></article>)}</div><aside className="order-summary"><h3>Order summary</h3><div><span>Subtotal</span><strong>£{subtotal}</strong></div><div><span>Shipping</span><strong>Free</strong></div><div className="summary-total"><span>Total</span><strong>£{subtotal}</strong></div><Link className="button primary full" to="/checkout">Proceed to checkout</Link><small>Taxes calculated at checkout.</small></aside></div>}</div>;
+}
